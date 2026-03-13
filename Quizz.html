@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+body{
+  font-family: Arial;
+}
+
+.container{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,200px);
+  gap:20px;
+}
+
+.flip-card{
+  width:200px;
+  height:150px;
+  perspective:1000px;
+  cursor:pointer;
+}
+
+.flip-card-inner{
+  position:relative;
+  width:100%;
+  height:100%;
+  transition:transform 0.6s;
+  transform-style:preserve-3d;
+}
+
+.flip-card.flip .flip-card-inner{
+  transform:rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:10px;
+  box-sizing:border-box;
+  backface-visibility:hidden;
+
+  font-size: 14px;
+}
+
+.flip-card-front{
+  background:#eee;
+}
+
+.flip-card-back{
+  background:#2980b9;
+  color:white;
+  transform:rotateY(180deg);
+}
+
+</style>
+</head>
+
+<body>
+
+<h2>Quiz Cards</h2>
+
+<div class="container" id="quiz"></div>
+
+<script>
+
+const questions = [
+
+{q:"1.	Vilken krypteringsteknik kunde tillämpas med hjälp av Albertis krypteringsskiva?",a:"Monoalfabetiskt substitutionskrypto och Polyalfabetisk substitutionskrypto "},
+{q:"2.	Namn någon krypteringsmetod, annan än Rijndael, av finalisterna i NISTs tävling försymmetriska blockkrypton 1997–2000?",a:"Twofish, Serpent, Mars och RCG"},
+{q:"3.	Vad brukar man kalla det exempel på påstådd steganografi genom att med ett fixt antal bokstävers avstånd gömma ord och som studerades av den israeliske matematikern Eliyahu Rips? ",a:"Bibelkoden"},
+{q:"4.	Vad är den trebokstaviga förkortningen som står för att med en kvantdator distribuerakrypteringsnycklar som på grund av elementarpartiklarnas invecklingsegenskap inte kan observeras av obehöriga utan att detta avslöjas?",a:"GKD (Quantum Key Distribution)"},
+{q:"5.	Vad hette det krypteringssystem som kröntes till AES då NISTs krypteringstävling avgjordes år 2000?",a:"Rijndael."},
+{q:"6.	Vad hette det gods i England där flera 1000 av de mest framstående kryptoanalytikerna i Storbritannien arbetade under andra världskriget??",a:"Bletchley Park "},
+{q:"7.	Vad är en scytale?",a:"En scytale var en stav kring vilken en läderremsa virades så att ett meddelande kunde skrivas på remsan med en bokstav per varv. "},
+{q:"8.	Nämn två metoder för nyckelgenerering som är utvecklingar av Diffie-Hellman?",a:"1. MQV (Menezes–Qu–Vanstone), 2.Kerberos:"},
+{q:"9.	Vad hette den man som ledde Queen Mary Stuarts sammansvärjning mot Queen Eliza beth då Mary satt fängslad i Towern? (Efternamnet räcker.)?",a:"Anthony Babington"},
+{q:"10.	Vad innebär empirisk styrka hos ett krypteringssystem?",a:"Det innebär att krypteringssystemet stått emot kryptoanalys under en lång tid. "},
+
+// add up to 30
+{q:"11.	Vad kallas följande säkerhetsprincip för krypteringsändamål: givet en ordning N, generator g och uppsnappade tal A och B, ange a sådant att ga (mod N) = A eller b sådant att gb (mod N) = B? (Den trebokstaviga förkortningen räcker.)?",a:"DHP (Diffie Hellman Problem)"},
+{q:"12.	En krypteringsmetod kallas reciprok om exakt samma procedur kan användas för både kryptering och dekryptering. Nämn en reciprok metod?",a:"XOR/Vernam/One Time Pad: M\oplus K=Coch C\oplus K=M."},
+{q:"13.	Vad hette den skotska drottning, i för- och efternamn, som konspirerade mot att störta drottning Elizabeth I i 1500-talets England?",a:"Mary/Maria Sturat"},
+{q:"14.	Vad hette den svenske matematikprofessor, i för- och efternamn, som knäckte det tyska G-skrivarkryptot under andra världskriget?",a:"Arne Beurling"},
+{q:"15.	Vad kallas en betrodd tredje aktör vid en krypterad kommunikation mellan två parter? (Den trebokstaviga förkortningen räcker.)?",a:"TTP (Trusted Third Party)"},
+{q:"16.	Vid kommunikation mellan olika parter kan man behöva en procedur där man verifierar att man verkligen är den man utger sig för att vara. Vad kallas en sådan procedur?",a:"En sådan procedur kallas autentisering. "},
+{q:"17.	Vad kallas den säkerhetsprincip som innebär att man för given ordning n och givet element a ∈ Zn ska ange x ∈ Z+ sä att x2 ≡ a (mod n)? Den trebokstaviga f¨örkortningen räcker som svar?",a:"QRP — Quadratic Residue Problem."},
+{q:"Nämn en krypteringsmaskin.",a:"1. Albertis krypteringsskiva, 2. Enigma , 3. G skrivaren "},
+{q:"19.	Nämn en metod för steganografi",a:"LSB (least significant bit för bild steganografi)"},
+{q:"20.	Vad kallas den samling regler för kryptering med publika nycklar som även kan innehålla rutiner för säkerhet och digitala ID-kort? Den trebokstaviga förkortningen räcker?",a:"PKI (Public Key Infrastructure)"},
+{q:"21.	Vad kallas den sortens krypteringssystem som Lucifer och DES var exempel på efter sin upphovsmakare?",a:"Feistel kryptosystem"},
+{q:"Example Q22",a:"Answer"},
+{q:"Example Q23",a:"Answer"},
+{q:"Example Q24",a:"Answer"},
+{q:"Example Q25",a:"Answer"},
+{q:"Example Q26",a:"Answer"},
+{q:"Example Q27",a:"Answer"},
+{q:"Example Q28",a:"Answer"},
+{q:"Example Q29",a:"Answer"},
+{q:"Example Q30",a:"Answer"}
+
+];
+
+const container = document.getElementById("quiz");
+
+questions.forEach(item => {
+
+const card = document.createElement("div");
+card.className = "flip-card";
+
+card.innerHTML = `
+<div class="flip-card-inner">
+
+<div class="flip-card-front">
+${item.q}
+</div>
+
+<div class="flip-card-back">
+${item.a}
+</div>
+
+</div>
+`;
+
+card.onclick = () => card.classList.toggle("flip");
+
+container.appendChild(card);
+
+});
+
+</script>
+
+</body>
+</html>
